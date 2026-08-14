@@ -11,11 +11,11 @@ const employees = {
 } as const;
 
 const records = [
-  { day: "Mon", date: "Aug 10", scanned: 1184, good: 1161, bad: 23, quality: 98.1, downtime: 18, reason: "Scanner calibration" },
-  { day: "Tue", date: "Aug 11", scanned: 1268, good: 1249, bad: 19, quality: 98.5, downtime: 12, reason: "System update" },
-  { day: "Wed", date: "Aug 12", scanned: 1216, good: 1199, bad: 17, quality: 98.6, downtime: 8, reason: "Paper jam" },
-  { day: "Thu", date: "Aug 13", scanned: 1324, good: 1309, bad: 15, quality: 98.9, downtime: 6, reason: "Paper jam" },
-  { day: "Fri", date: "Aug 14", scanned: 1284, good: 1270, bad: 14, quality: 98.9, downtime: 9, reason: "Network delay" },
+  { day: "Mon", date: "Aug 10", clockIn: "6:58 AM", clockOut: "3:31 PM", hours: "8h 03m", attendance: "On time", scanned: 1184, good: 1161, bad: 23, quality: 98.1, downtime: 18, reason: "Scanner calibration" },
+  { day: "Tue", date: "Aug 11", clockIn: "7:02 AM", clockOut: "3:34 PM", hours: "8h 02m", attendance: "On time", scanned: 1268, good: 1249, bad: 19, quality: 98.5, downtime: 12, reason: "System update" },
+  { day: "Wed", date: "Aug 12", clockIn: "6:55 AM", clockOut: "3:28 PM", hours: "8h 03m", attendance: "On time", scanned: 1216, good: 1199, bad: 17, quality: 98.6, downtime: 8, reason: "Paper jam" },
+  { day: "Thu", date: "Aug 13", clockIn: "7:09 AM", clockOut: "3:36 PM", hours: "7h 57m", attendance: "Late", scanned: 1324, good: 1309, bad: 15, quality: 98.9, downtime: 6, reason: "Paper jam" },
+  { day: "Fri", date: "Aug 14", clockIn: "6:59 AM", clockOut: "3:32 PM", hours: "8h 03m", attendance: "On time", scanned: 1284, good: 1270, bad: 14, quality: 98.9, downtime: 9, reason: "Network delay" },
 ];
 
 const trendSets: Record<Period, { labels: string[]; values: number[]; quality: number[] }> = {
@@ -91,6 +91,7 @@ export default function Home() {
 
         <nav className="period-tabs" aria-label="Report period">
           {(["Daily", "Weekly", "Monthly"] as Period[]).map((p) => <button key={p} className={period === p ? "active" : ""} onClick={() => setPeriod(p)}>{p}</button>)}
+          <button onClick={() => document.getElementById("attendance")?.scrollIntoView({ behavior: "smooth" })}>Attendance</button>
           <button className="date-button">Aug 10 – Aug 14 <span>⌄</span></button>
         </nav>
 
@@ -115,6 +116,13 @@ export default function Home() {
             <div className="donut-row"><div className="donut"><span><b>53</b><small>minutes</small></span></div><ul><li><i className="blue-dot" /><span>Scanner calibration</span><b>18 min</b></li><li><i className="purple-dot" /><span>System update</span><b>12 min</b></li><li><i className="orange-dot" /><span>Paper jams</span><b>14 min</b></li><li><i className="gray-dot" /><span>Network delay</span><b>9 min</b></li></ul></div>
           </article>
           <article className="panel insight"><p className="eyebrow">Weekly insight</p><h3>You’re on a roll.</h3><p>Your quality score improved three days in a row while scanning 4.8% more pages than last week.</p><div><span>★</span><small>Best day</small><strong>Thursday · 1,324 pages</strong></div></article>
+        </section>
+
+        <section className="panel attendance-panel" id="attendance">
+          <div className="panel-title"><div><h3>Time & attendance</h3><p>Daily clock-in and clock-out record</p></div><span className="attendance-summary"><b>40h 08m</b><small>Total this week</small></span></div>
+          <div className="attendance-grid">
+            {records.map((r) => <article key={r.date}><div className="attendance-day"><b>{r.day}</b><small>{r.date}</small></div><div className="time-block"><small>Clock in</small><strong>{r.clockIn}</strong></div><span className="time-line">→</span><div className="time-block"><small>Clock out</small><strong>{r.clockOut}</strong></div><div className="hours-block"><small>Worked</small><b>{r.hours}</b></div><span className={`attendance-status ${r.attendance === "Late" ? "late" : ""}`}>{r.attendance}</span></article>)}
+          </div>
         </section>
 
         <section className="panel table-panel"><div className="panel-title"><div><h3>Daily results</h3><p>A complete breakdown of this week</p></div><button onClick={() => window.print()}>Export report ↗</button></div>
